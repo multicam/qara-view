@@ -13,7 +13,7 @@ let viewsDir: string
 const base = `http://localhost:${PORT}`
 
 beforeAll(async () => {
-  viewsDir = await mkdtemp(join(tmpdir(), 'csf-view-persist-'))
+  viewsDir = await mkdtemp(join(tmpdir(), 'qara-view-persist-'))
   const mod = await import('../server.ts')
   server = mod.startServer({ port: PORT, viewsDir })
 })
