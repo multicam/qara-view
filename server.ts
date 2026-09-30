@@ -240,7 +240,7 @@ export function startServer(opts: ServerOptions = {}) {
 // Run as standalone if executed directly
 if (import.meta.main) {
   const s = startServer()
-  console.log(`csf-view API server running on :${s.port}`)
+  console.log(`qara-view API server running on :${s.port}`)
   console.log(`Frontend: http://localhost:${s.port}/`)
   console.log(`Views dir: ${s.viewsDir}`)
 }
