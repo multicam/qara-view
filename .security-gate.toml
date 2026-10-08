@@ -1,37 +1,8 @@
 # Supply-chain allowlist — staleness false positives (all packages < 14d old at scan time)
 # Generated 2026-05-26 as part of Phase 5 bootstrap remediation
-
-[[allowlist]]
-package = "@oxc-project/types"
-ecosystem = "npm"
-reason = "Staleness-only: oxc types package, 7.4d old at scan; no CVE"
-reviewed = "2026-09-21"
-review_expires = "2026-12-20"
-
-[[allowlist]]
-package = "@rolldown/*"
-ecosystem = "npm"
-reason = "Staleness-only: rolldown platform bindings + pluginutils 1.0.x, 5–13d old at scan; no CVE"
-reviewed = "2026-09-21"
-review_expires = "2026-12-20"
-
-[[allowlist]]
-package = "rolldown"
-ecosystem = "npm"
-reason = "Staleness-only: rolldown 1.0.2, 5.5d old at scan; no CVE"
-reviewed = "2026-09-21"
-review_expires = "2026-12-20"
-
-[[allowlist]]
-package = "postcss"
-ecosystem = "npm"
-reason = "Staleness-only: postcss 8.5.15, 6.4d old at scan; no CVE"
-reviewed = "2026-09-21"
-review_expires = "2026-12-20"
-
-[[allowlist]]
-package = "vite"
-ecosystem = "npm"
-reason = "Staleness-only: vite 8.0.14, 4.6d old at scan; no CVE"
-reviewed = "2026-09-21"
-review_expires = "2026-12-20"
+#
+# All 5 entries pruned 2026-09-14 (allowlist-hygiene sweep): each was a
+# staleness-only exemption (default policy window 14 days), and every
+# currently-resolved version in bun.lock is now older than that window, so
+# none of these packages would trip the staleness redflag today. See the
+# prune commit for per-package publish-date evidence.
