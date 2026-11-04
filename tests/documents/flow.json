@@ -1,5 +1,6 @@
 {
   "store": {
+    "document:document": { "gridSize": 10, "name": "", "meta": {}, "id": "document:document", "typeName": "document" },
     "page:page1": {
       "id": "page:page1",
       "name": "Page 1",
@@ -25,7 +26,8 @@
         "fill": "solid",
         "dash": "draw",
         "size": "m",
-        "text": "User",
+        "growY": 0, "url": "", "scale": 1, "labelColor": "black", "align": "middle", "verticalAlign": "middle",
+        "richText": { "type": "doc", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "User" }] }] },
         "font": "draw"
       },
       "typeName": "shape",
@@ -49,7 +51,8 @@
         "fill": "none",
         "dash": "draw",
         "size": "m",
-        "text": "Login Screen",
+        "growY": 0, "url": "", "scale": 1, "labelColor": "black", "align": "middle", "verticalAlign": "middle",
+        "richText": { "type": "doc", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Login Screen" }] }] },
         "font": "draw"
       },
       "typeName": "shape",
@@ -73,7 +76,8 @@
         "fill": "semi",
         "dash": "draw",
         "size": "m",
-        "text": "Dashboard",
+        "growY": 0, "url": "", "scale": 1, "labelColor": "black", "align": "middle", "verticalAlign": "middle",
+        "richText": { "type": "doc", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Dashboard" }] }] },
         "font": "draw"
       },
       "typeName": "shape",
@@ -99,6 +103,7 @@
         "size": "m",
         "arrowheadStart": "none",
         "arrowheadEnd": "arrow",
+        "elbowMidPoint": 0.5, "fill": "none", "labelColor": "black", "labelPosition": 0.5, "font": "draw", "scale": 1,
         "richText": { "type": "doc", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "authenticates" }] }] }
       },
       "typeName": "shape",
@@ -124,6 +129,7 @@
         "size": "m",
         "arrowheadStart": "none",
         "arrowheadEnd": "arrow",
+        "elbowMidPoint": 0.5, "fill": "none", "labelColor": "black", "labelPosition": 0.5, "font": "draw", "scale": 1,
         "richText": { "type": "doc", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "redirects" }] }] }
       },
       "typeName": "shape",
@@ -135,7 +141,7 @@
       "fromId": "shape:arrow1",
       "toId": "shape:user",
       "typeName": "binding",
-      "props": { "terminal": "start", "normalizedAnchor": { "x": 0.5, "y": 0.5 }, "isExact": false, "isPrecise": false },
+      "props": { "terminal": "start", "normalizedAnchor": { "x": 0.5, "y": 0.5 }, "isExact": false, "isPrecise": false, "snap": "none" },
       "meta": {}
     },
     "binding:arrow1-end": {
@@ -144,7 +150,7 @@
       "fromId": "shape:arrow1",
       "toId": "shape:login",
       "typeName": "binding",
-      "props": { "terminal": "end", "normalizedAnchor": { "x": 0.5, "y": 0.5 }, "isExact": false, "isPrecise": false },
+      "props": { "terminal": "end", "normalizedAnchor": { "x": 0.5, "y": 0.5 }, "isExact": false, "isPrecise": false, "snap": "none" },
       "meta": {}
     },
     "binding:arrow2-start": {
@@ -153,7 +159,7 @@
       "fromId": "shape:arrow2",
       "toId": "shape:login",
       "typeName": "binding",
-      "props": { "terminal": "start", "normalizedAnchor": { "x": 0.5, "y": 0.5 }, "isExact": false, "isPrecise": false },
+      "props": { "terminal": "start", "normalizedAnchor": { "x": 0.5, "y": 0.5 }, "isExact": false, "isPrecise": false, "snap": "none" },
       "meta": {}
     },
     "binding:arrow2-end": {
@@ -162,11 +168,12 @@
       "fromId": "shape:arrow2",
       "toId": "shape:dashboard",
       "typeName": "binding",
-      "props": { "terminal": "end", "normalizedAnchor": { "x": 0.5, "y": 0.5 }, "isExact": false, "isPrecise": false },
+      "props": { "terminal": "end", "normalizedAnchor": { "x": 0.5, "y": 0.5 }, "isExact": false, "isPrecise": false, "snap": "none" },
       "meta": {}
     }
   },
   "schema": {
-    "schemaVersion": 2
+    "schemaVersion": 2,
+    "sequences": { "com.tldraw.document": 2, "com.tldraw.store": 5, "com.tldraw.page": 1, "com.tldraw.shape": 4, "com.tldraw.shape.geo": 11, "com.tldraw.shape.arrow": 8, "com.tldraw.binding.arrow": 1 }
   }
 }

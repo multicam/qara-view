@@ -3,19 +3,21 @@ import { viewFilename, parseViewFilename } from '../src/lib/persistence'
 import { mkdtemp, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import wireframe from './fixtures/wireframe.json'
-import flow from './fixtures/flow.json'
-import empty from './fixtures/empty.json'
+import { startServer } from '../server.ts'
+import type { TLStoreSnapshot } from 'tldraw'
+import wireframe from './documents/wireframe.json'
+import flow from './documents/flow.json'
+import empty from './documents/empty.json'
 
-const PORT = 7292 // different test port
-let server: { stop: () => void }
+let server: Awaited<ReturnType<typeof startServer>>
 let viewsDir: string
-const base = `http://localhost:${PORT}`
+let base: string
 
 beforeAll(async () => {
   viewsDir = await mkdtemp(join(tmpdir(), 'qara-view-persist-'))
-  const mod = await import('../server.ts')
-  server = mod.startServer({ port: PORT, viewsDir })
+  server = await startServer({ port: 0, viewsDir })
+  expect(server.port).toBeGreaterThan(0)
+  base = `http://localhost:${server.port}`
 })
 
 afterAll(async () => {
@@ -38,7 +40,22 @@ async function load(name: string) {
 }
 
 describe('round-trip persistence', () => {
-  it('wireframe fixture: save → load preserves all shapes', async () => {
+  it('loads each document into the real tldraw store and round-trips its snapshot', async () => {
+    const { createTLStore, defaultShapeUtils, loadSnapshot } = await import('tldraw')
+    for (const [name, document] of Object.entries({ empty, flow, wireframe })) {
+      const store = createTLStore({ shapeUtils: defaultShapeUtils })
+      // JSON imports widen literal types; tldraw validates the records on load.
+      loadSnapshot(store, document as unknown as TLStoreSnapshot)
+      const snapshot = store.getStoreSnapshot()
+      expect(Object.keys(snapshot.store).length).toBe(Object.keys(document.store).length)
+      expect(snapshot.store).toEqual(document.store)
+      expect((await save(`store-${name}`, snapshot)).status).toBe(200)
+      const loaded = await load(`store-${name}`)
+      expect(loaded.document).toEqual(snapshot)
+    }
+  })
+
+  it('wireframe document: save → load preserves all shapes', async () => {
     await save('wireframe', wireframe)
     const data = await load('wireframe')
 
@@ -49,7 +66,7 @@ describe('round-trip persistence', () => {
     expect(data.document.store['shape:note1']).toBeDefined()
   })
 
-  it('flow fixture: save → load preserves arrow bindings', async () => {
+  it('flow document: save → load preserves arrow bindings', async () => {
     await save('flow', flow)
     const data = await load('flow')
 
@@ -60,7 +77,7 @@ describe('round-trip persistence', () => {
     expect(data.document.store['binding:arrow2-end']).toBeDefined()
   })
 
-  it('empty fixture: save → load produces valid document', async () => {
+  it('empty document: save → load produces valid document', async () => {
     await save('empty', empty)
     const data = await load('empty')
 

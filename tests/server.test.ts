@@ -1,26 +1,44 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'bun:test'
-import { mkdtemp, rm } from 'node:fs/promises'
+import { chmod, mkdtemp, rm } from 'node:fs/promises'
+import { startServer } from '../server.ts'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import wireframe from './fixtures/wireframe.json'
-import flow from './fixtures/flow.json'
-import empty from './fixtures/empty.json'
+import wireframe from './documents/wireframe.json'
+import flow from './documents/flow.json'
+import empty from './documents/empty.json'
 
-const PORT = 7291 // test port, not 7201
-
-let server: { stop: () => void }
+let server: Awaited<ReturnType<typeof startServer>>
 let viewsDir: string
-const base = `http://localhost:${PORT}`
+let base: string
 
 beforeAll(async () => {
   viewsDir = await mkdtemp(join(tmpdir(), 'qara-view-test-'))
-  const mod = await import('../server.ts')
-  server = mod.startServer({ port: PORT, viewsDir })
+  server = await startServer({ port: 0, viewsDir })
+  expect(server.port).toBeGreaterThan(0)
+  base = `http://localhost:${server.port}`
 })
 
 afterAll(async () => {
   server?.stop()
   await rm(viewsDir, { recursive: true, force: true })
+})
+
+describe('startup', () => {
+  it('rejects permission-denied views directory creation (must not run as root)', async () => {
+    expect(process.getuid?.(), 'permission-denied test requires a non-root process').not.toBe(0)
+    const parent = await mkdtemp(join(tmpdir(), 'qara-view-denied-'))
+    let started: Awaited<ReturnType<typeof startServer>> | undefined
+    try {
+      await chmod(parent, 0o500)
+      await expect((async () => {
+        started = await startServer({ port: 0, viewsDir: join(parent, 'views') })
+      })()).rejects.toMatchObject({ code: 'EACCES' })
+    } finally {
+      started?.stop()
+      await chmod(parent, 0o700)
+      await rm(parent, { recursive: true, force: true })
+    }
+  })
 })
 
 describe('POST /api/save', () => {
