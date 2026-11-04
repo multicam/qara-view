@@ -1,0 +1,16 @@
+{
+  "store": {
+    "document:document": { "gridSize": 10, "name": "", "meta": {}, "id": "document:document", "typeName": "document" },
+    "page:page1": {
+      "id": "page:page1",
+      "name": "Page 1",
+      "typeName": "page",
+      "index": "a1",
+      "meta": {}
+    }
+  },
+  "schema": {
+    "schemaVersion": 2,
+    "sequences": { "com.tldraw.document": 2, "com.tldraw.store": 5, "com.tldraw.page": 1 }
+  }
+}

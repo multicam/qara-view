@@ -19,19 +19,19 @@ const MIME_TYPES: Record<string, string> = {
 }
 
 interface ServerOptions {
-  port?: number
-  viewsDir?: string
+  port: number
+  viewsDir: string
 }
 
 const startTime = Date.now()
 
-export function startServer(opts: ServerOptions = {}) {
-  const port = opts.port ?? (Number(process.env.PORT) || 7201)
-  const viewsDir = resolve(opts.viewsDir ?? process.env.VIEWS_DIR ?? 'thoughts/shared/views')
+export async function startServer(opts: ServerOptions) {
+  const port = opts.port
+  const viewsDir = resolve(opts.viewsDir)
   const clients = new Set<SSEClient>()
 
   // Ensure the views dir exists at launch so users see a valid path immediately
-  mkdir(viewsDir, { recursive: true }).catch(() => {})
+  await mkdir(viewsDir, { recursive: true })
 
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -239,7 +239,9 @@ export function startServer(opts: ServerOptions = {}) {
 
 // Run as standalone if executed directly
 if (import.meta.main) {
-  const s = startServer()
+  const port = Number(process.env.PORT) || 7201
+  const viewsDir = process.env.VIEWS_DIR ?? 'thoughts/shared/views'
+  const s = await startServer({ port, viewsDir })
   console.log(`qara-view API server running on :${s.port}`)
   console.log(`Frontend: http://localhost:${s.port}/`)
   console.log(`Views dir: ${s.viewsDir}`)

@@ -1,5 +1,6 @@
 {
   "store": {
+    "document:document": { "gridSize": 10, "name": "", "meta": {}, "id": "document:document", "typeName": "document" },
     "page:page1": {
       "id": "page:page1",
       "name": "Page 1",
@@ -20,7 +21,8 @@
       "props": {
         "w": 400,
         "h": 600,
-        "name": "Dashboard"
+        "name": "Dashboard",
+        "color": "black"
       },
       "typeName": "shape",
       "meta": {}
@@ -43,7 +45,8 @@
         "fill": "solid",
         "dash": "draw",
         "size": "m",
-        "text": "Header / Nav",
+        "growY": 0, "url": "", "scale": 1, "labelColor": "black", "align": "middle", "verticalAlign": "middle",
+        "richText": { "type": "doc", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Header / Nav" }] }] },
         "font": "draw"
       },
       "typeName": "shape",
@@ -67,7 +70,8 @@
         "fill": "none",
         "dash": "draw",
         "size": "m",
-        "text": "Main Content Area",
+        "growY": 0, "url": "", "scale": 1, "labelColor": "black", "align": "middle", "verticalAlign": "middle",
+        "richText": { "type": "doc", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Main Content Area" }] }] },
         "font": "draw"
       },
       "typeName": "shape",
@@ -91,7 +95,8 @@
         "fill": "semi",
         "dash": "draw",
         "size": "m",
-        "text": "Sidebar",
+        "growY": 0, "url": "", "scale": 1, "labelColor": "black", "align": "middle", "verticalAlign": "middle",
+        "richText": { "type": "doc", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Sidebar" }] }] },
         "font": "draw"
       },
       "typeName": "shape",
@@ -110,7 +115,8 @@
       "props": {
         "color": "yellow",
         "size": "m",
-        "text": "Responsive: collapses sidebar on mobile",
+        "growY": 0, "fontSizeAdjustment": 0, "url": "", "scale": 1, "labelColor": "black", "align": "middle", "verticalAlign": "middle",
+        "richText": { "type": "doc", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Responsive: collapses sidebar on mobile" }] }] },
         "font": "draw"
       },
       "typeName": "shape",
@@ -118,6 +124,7 @@
     }
   },
   "schema": {
-    "schemaVersion": 2
+    "schemaVersion": 2,
+    "sequences": { "com.tldraw.document": 2, "com.tldraw.store": 5, "com.tldraw.page": 1, "com.tldraw.shape": 4, "com.tldraw.shape.frame": 1, "com.tldraw.shape.geo": 11, "com.tldraw.shape.note": 10 }
   }
 }
