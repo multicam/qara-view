@@ -1,8 +1,8 @@
 # qara-view
 
 A browser canvas for **views**. Draw on a [tldraw](https://tldraw.dev) canvas, save your work by
-name, and come back to it later: views are stored as JSON documents in a views directory, each
-save captured with a PNG screenshot alongside it. A small Bun server fronts those files and
+name, and come back to it later: views are stored as JSON documents in a views directory, and
+saving also captures a PNG screenshot of the canvas. A small Bun server fronts those files and
 pushes save/rename events to open browsers over server-sent events.
 
 ## Quickstart
