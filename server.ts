@@ -1,5 +1,5 @@
 import { join, dirname, resolve } from 'node:path'
-import { mkdir, readdir, rename } from 'node:fs/promises'
+import { mkdir, readdir, rm, unlink } from 'node:fs/promises'
 
 type SSEClient = WritableStreamDefaultWriter<Uint8Array>
 
@@ -166,12 +166,17 @@ export async function startServer(opts: ServerOptions) {
         const data = await Bun.file(fromFile).json()
         data.name = body.to
         data.savedAt = new Date().toISOString()
-        await Bun.write(toFile, JSON.stringify(data, null, 2))
-
-        // Remove old file if name actually changed
-        if (fromFile !== toFile) {
-          await Bun.file(fromFile).exists() && await rename(fromFile, fromFile + '.bak')
+        try {
+          await Bun.write(toFile, JSON.stringify(data, null, 2))
+        } catch {
+          return new Response('Failed to write renamed view', { status: 500, headers: corsHeaders })
         }
+
+        // Remove old file only after the new file has been written successfully
+        if (fromFile !== toFile) {
+          await unlink(fromFile)
+        }
+        await rm(fromFile + '.bak', { force: true })
 
         await pushSSE({ name: body.to, renamed: true, from: body.from })
 

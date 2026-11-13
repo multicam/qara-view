@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'bun:test'
-import { chmod, mkdtemp, rm } from 'node:fs/promises'
+import { chmod, mkdir, mkdtemp, rm } from 'node:fs/promises'
 import { startServer } from '../server.ts'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -302,7 +302,64 @@ describe('POST /api/rename', () => {
     // New file exists with updated name field
     const loaded = await (await fetch(`${base}/api/load?name=new-name`)).json()
     expect(loaded.name).toBe('new-name')
-    expect(loaded.document).toBeDefined()
+    expect(loaded.document).toEqual(wireframe)
+    expect(await Bun.file(join(viewsDir, 'old-name.json')).exists()).toBe(false)
+    expect(await Bun.file(join(viewsDir, 'old-name.json.bak')).exists()).toBe(false)
+  })
+
+  it('deletes only the renamed record backup', async () => {
+    const record = { name: 'with-backup', savedAt: '2026-01-01', document: empty }
+    await Bun.write(join(viewsDir, 'with-backup.json'), JSON.stringify(record))
+    await Bun.write(join(viewsDir, 'with-backup.json.bak'), 'stale backup')
+    await Bun.write(join(viewsDir, 'unrelated.json.bak'), 'keep this backup')
+
+    const res = await fetch(`${base}/api/rename`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from: 'with-backup', to: 'without-backup' }),
+    })
+
+    expect(res.status).toBe(200)
+    expect(await Bun.file(join(viewsDir, 'without-backup.json')).json()).toMatchObject({
+      name: 'without-backup', document: empty,
+    })
+    expect(await Bun.file(join(viewsDir, 'with-backup.json')).exists()).toBe(false)
+    expect(await Bun.file(join(viewsDir, 'with-backup.json.bak')).exists()).toBe(false)
+    expect(await Bun.file(join(viewsDir, 'unrelated.json.bak')).text()).toBe('keep this backup')
+  })
+
+  it('preserves the source and backup when the destination write fails', async () => {
+    const original = JSON.stringify({ name: 'write-failure', document: wireframe })
+    await Bun.write(join(viewsDir, 'write-failure.json'), original)
+    await Bun.write(join(viewsDir, 'write-failure.json.bak'), 'original backup')
+    await mkdir(join(viewsDir, 'blocked-destination.json'))
+
+    const res = await fetch(`${base}/api/rename`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from: 'write-failure', to: 'blocked-destination' }),
+    })
+
+    expect(res.status).toBe(500)
+    expect(await Bun.file(join(viewsDir, 'write-failure.json')).text()).toBe(original)
+    expect(await Bun.file(join(viewsDir, 'write-failure.json.bak')).text()).toBe('original backup')
+  })
+
+  it('keeps the record when sanitized names resolve to the same path', async () => {
+    await Bun.write(join(viewsDir, 'same_path.json'), JSON.stringify({ name: 'same/path', document: empty }))
+    await Bun.write(join(viewsDir, 'same_path.json.bak'), 'stale backup')
+
+    const res = await fetch(`${base}/api/rename`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from: 'same/path', to: 'same:path' }),
+    })
+
+    expect(res.status).toBe(200)
+    expect(await Bun.file(join(viewsDir, 'same_path.json')).json()).toMatchObject({
+      name: 'same:path', document: empty,
+    })
+    expect(await Bun.file(join(viewsDir, 'same_path.json.bak')).exists()).toBe(false)
   })
 
   it('returns 404 for nonexistent source', async () => {
